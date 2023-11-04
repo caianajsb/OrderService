@@ -61,7 +61,7 @@ public class OrderService {
             if (item == null
                     || item.getQuantity() < orderLineItemDTO.getQuantity()) {
                 throw new IllegalArgumentException("Product is not in stock");
-            } else {
+            } else if (orderLineItemDTO.getQuantity() > 0){
                 item.setQuantity(item.getQuantity() - orderLineItemDTO.getQuantity());
             }
         }
