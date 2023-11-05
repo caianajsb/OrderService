@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 public class OrderService {
 
     private final OrderRepository repository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     public void placeOrder(OrderDTO orderDTO) {
         Order order = new Order();
@@ -44,8 +44,8 @@ public class OrderService {
                 .map(orderLineItem -> orderLineItem.getSkuCode())
                 .toList();
 
-        InventoryDTO[] inventoryDTOs = webClient.get()
-                .uri("http://localhost:8082/ecommerce/inventories",
+        InventoryDTO[] inventoryDTOs = webClientBuilder.build().get()
+                .uri("http://inventory-service/ecommerce/inventories",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryDTO[].class)
@@ -68,8 +68,8 @@ public class OrderService {
 
         repository.save(order);
 
-        String result = webClient.put()
-                .uri("http://localhost:8082/ecommerce/inventories")
+        String result = webClientBuilder.build().put()
+                .uri("http://inventory-service/ecommerce/inventories")
                 .body(Mono.just(Arrays.asList(inventoryDTOs)), new ParameterizedTypeReference<List<InventoryDTO>>() {
                 })
                 .retrieve()
