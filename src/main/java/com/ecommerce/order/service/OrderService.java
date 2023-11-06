@@ -87,4 +87,26 @@ public class OrderService {
 
         return orderLineItem;
     }
+    
+    private OrderLineItemDTO mapToDTO(OrderLineItem item) {
+        OrderLineItemDTO orderLineItemDTO = OrderLineItemDTO
+                .builder()
+                .price(item.getPrice())
+                .quantity(item.getQuantity())
+                .skuCode(item.getSkuCode())
+                .build();
+
+        return orderLineItemDTO;
+    }
+
+    public List<OrderDTO> getAllOrders() {
+        List<Order> orders = repository.findAll();
+        List<OrderDTO> ordersDTOs = orders.stream().map(order -> OrderDTO.builder()
+                .id(order.getId())
+                .orderNumber(order.getOrderNumber())
+                .items(order.getItems().stream().map(item -> mapToDTO(item)).toList())
+                .build()
+        ).toList();
+        return ordersDTOs;
+    }
 }
