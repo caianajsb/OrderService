@@ -3,10 +3,14 @@ package com.ecommerce.order.controller;
 
 import com.ecommerce.order.dto.OrderDTO;
 import com.ecommerce.order.service.OrderService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -26,11 +30,11 @@ public class OrderController {
     private final OrderService service;
     
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.CREATED)   
     public String placeOrder(@RequestBody @Valid OrderDTO orderDTO){
-        service.placeOrder(orderDTO);
-        return "Order placed sucessfully";
+        return service.placeOrder(orderDTO);
     }
+
     
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

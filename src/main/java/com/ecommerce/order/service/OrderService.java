@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -30,7 +31,7 @@ public class OrderService {
     private final OrderRepository repository;
     private final WebClient.Builder webClientBuilder;
 
-    public void placeOrder(OrderDTO orderDTO) {
+    public String placeOrder(OrderDTO orderDTO) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
 
@@ -74,7 +75,8 @@ public class OrderService {
                 })
                 .retrieve()
                 .bodyToMono(String.class)
-                .block();
+                .block();       
+        return "Order placed sucessfully";
     }
 
     private OrderLineItem mapFromDTO(OrderLineItemDTO item) {
